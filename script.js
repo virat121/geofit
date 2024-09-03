@@ -6,17 +6,16 @@ class Workout {
   clicks = 0;
 
   constructor(coords, distance, duration) {
-    this.coords = coords; 
-    this.distance = distance; 
-    this.duration = duration; 
+    this.coords = coords;
+    this.distance = distance;
+    this.duration = duration;
   }
 
   _setDescription() {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
-      months[this.date.getMonth()]
-    } ${this.date.getDate()}`;
+    this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${months[this.date.getMonth()]
+      } ${this.date.getDate()}`;
   }
 
   click() {
@@ -51,7 +50,7 @@ class Cycling extends Workout {
   }
 
   calcSpeed() {
-    
+
     this.speed = this.distance / (this.duration / 60);
     return this.speed;
   }
@@ -73,9 +72,9 @@ class App {
   #workouts = [];
 
   constructor() {
-    this._getPosition();  
+    this._getPosition();
 
-    
+
     this._getLocalStorage();
 
     form.addEventListener('submit', this._newWorkout.bind(this));
@@ -86,17 +85,33 @@ class App {
   }
 
   _fetchQuote() {
-    fetch('https://zenquotes.io/api/quotes')
-      .then(response => response.json())
+    const category = 'fitness';
+    const apiUrl = `https://api.api-ninjas.com/v1/quotes?category=${category}`;
+    const apiKey = '/5wLxl8QW6zGG1EzEhj+hQ==FXvAthXuksF0Cx9l';
+    fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'X-Api-Key': apiKey
+      }
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+      })
       .then(data => {
-        document.getElementById('quote').textContent = `"${data[0].q}"`;
-        document.getElementById('author').textContent = `– ${data[0].a}`;
+        console.log(data);
+        document.getElementById('quote').textContent = `"${data[0].quote}"`;
+        document.getElementById('author').textContent = `– ${data[0].author}`;
       })
       .catch(error => {
         console.error('Error fetching quote:', error);
         document.getElementById('quote').textContent = 'Error loading quote.';
       });
-    }
+  }
+
 
   _getPosition() {
     if (navigator.geolocation)
@@ -220,9 +235,8 @@ class App {
       <li class="workout workout--${workout.type}" data-id="${workout.id}">
         <h2 class="workout__title">${workout.description}</h2>
         <div class="workout__details">
-          <span class="workout__icon">${
-            workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
-          }</span>
+          <span class="workout__icon">${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
+      }</span>
           <span class="workout__value">${workout.distance}</span>
           <span class="workout__unit">km</span>
         </div>
@@ -309,7 +323,7 @@ class App {
 
 
 
-  
+
 }
 
 const app = new App();
